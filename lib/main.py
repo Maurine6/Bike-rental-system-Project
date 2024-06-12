@@ -28,6 +28,14 @@ class Customer(Base):
 
     rentals = relationship("Rental", order_by=Rental.id, back_populates="customer")
 
+class Bike(Base):
+    __tablename__ = 'bikes'
+    
+    id = Column(INTEGER, primary_key=True, autoincrement=True)
+    bike_type = Column(String)
+    availability_status = Column(String)
+
+    rentals = relationship("Rental", order_by=Rental.id, back_populates="bike")
 
 Session = sessionmaker(bind=engine)
 session = Session()
