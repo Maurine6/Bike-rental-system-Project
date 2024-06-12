@@ -36,4 +36,11 @@ def update_bike(id, bike_type=None, availability_status=None):
     if availability_status:
         bike.availability_status = availability_status
     session.commit()
-    print(f"Updated bike {id}")    
+    print(f"Updated bike {id}")
+
+def delete_rental_history(customer_id):
+    rentals = session.query(Rental).filter(Rental.customer_name == customer_id).all()
+    for rental in rentals:
+        session.delete(rental)
+    session.commit()
+    print(f"Deleted rental history for customer {customer_id}")
