@@ -37,5 +37,9 @@ class Bike(Base):
 
     rentals = relationship("Rental", order_by=Rental.id, back_populates="bike")
 
+
+engine = create_engine("sqlite:///mydb.db", echo=True)
+Base.metadata.create_all(engine)
+
 Session = sessionmaker(bind=engine)
 session = Session()
