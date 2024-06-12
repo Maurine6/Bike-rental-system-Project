@@ -38,6 +38,46 @@ def update_bike(id, bike_type=None, availability_status=None):
     session.commit()
     print(f"Updated bike {id}")
 
+def view_available_bikes():
+    available_bikes = session.query(Bike).filter(Bike.availability_status == 'available').all()
+    if available_bikes:
+        print("Available Bikes:")
+        for bike in available_bikes:
+            print(f"{bike.id}: {bike.bike_type} - {bike.availability_status}")
+    else:
+        print("No bikes are available for rent.")
+
+def view_all_customers():
+    customers = session.query(Customer).all()
+    if customers:
+        print("All Customers:")
+        for customer in customers:
+            print(f"{customer.id}: {customer.name} ({customer.email})")
+    else:
+        print("No customers found.")
+
+def view_rented_bikes():
+    rented_bikes = session.query(Bike).filter(Bike.availability_status!= 'available').all()
+    if rented_bikes:
+        print("Rented Bikes:")
+        for bike in rented_bikes:
+            print(f"{bike.id}: {bike.bike_type} - {bike.availability_status}")
+    else:
+        print("No bikes are currently rented.")
+
+def view_rental_history(customer_email):
+    customer = session.query(Customer).filter(Customer.email == customer_email).first()
+    if customer:
+        rentals = session.query(Rental).filter(Rental.customer_name == customer.name).all()
+        if rentals:
+            print(f"Rental History for {customer.name} ({customer.email}):")
+            for rental in rentals:
+                print(f"ID: {rental.id}, Date: {rental.rental_date} - {rental.return_date}, Duration: {rental.rental_duration}")
+        else:
+            print("No rental history found for this customer.")
+    else:
+        print("No customer found with the given email.")
+
 def delete_rental_history(customer_id):
     rentals = session.query(Rental).filter(Rental.customer_name == customer_id).all()
     for rental in rentals:
