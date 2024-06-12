@@ -11,3 +11,14 @@ def add_customer(name, email, rental_history=None):
     session.add(new_customer)
     session.commit()
     print(f"Added customer {name}")
+
+def update_customer(id, name=None, email=None, rental_history=None):
+    customer = session.query(Customer).get(id)
+    if name:
+        customer.name = name
+    if email:
+        customer.email = email
+    if rental_history:
+        customer.rental_history = rental_history
+    session.commit()
+    print(f"Updated customer {id}")
