@@ -44,3 +44,17 @@ def delete_rental_history(customer_id):
         session.delete(rental)
     session.commit()
     print(f"Deleted rental history for customer {customer_id}")
+
+def search_customer_by_name(name):
+    customer = session.query(Customer).filter(Customer.name == name).first()
+    if customer:
+        print(f"Found customer: {customer.name} ({customer.email})")
+        rentals = session.query(Rental).filter(Rental.customer_name == customer.name).all()
+        if rentals:
+            print("Rentals:")
+            for rental in rentals:
+                print(f"ID: {rental.id}, Date: {rental.rental_date} - {rental.return_date}, Duration: {rental.rental_duration}")
+        else:
+            print("No rentals found for this customer.")
+    else:
+        print("No customer found with the given name.")
