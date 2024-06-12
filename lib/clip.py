@@ -1,5 +1,6 @@
 import argparse
 import sys
+import datetime
 from main import Base, engine, session
 from main import Customer, Bike, Rental
 
@@ -65,7 +66,17 @@ def view_rented_bikes():
     else:
         print("No bikes are currently rented.")
 
-def view_rental_history(customer_email):
+def view_rentals():
+    rentals = session.query(Rental).all()
+    if rentals:
+        print("All Rentals:")
+        for rental in rentals:
+            print(f"ID: {rental.id}, Customer: {rental.customer_name}, Bike: {rental.bike_id}, "
+                  f"Date: {rental.rental_date}, Return Date: {rental.return_date}, Duration: {rental.rental_duration}")
+    else:
+        print("No rentals found.")        
+
+'''def view_rental_history(customer_email):
     customer = session.query(Customer).filter(Customer.email == customer_email).first()
     if customer:
         rentals = session.query(Rental).filter(Rental.customer_name == customer.name).all()
@@ -76,7 +87,7 @@ def view_rental_history(customer_email):
         else:
             print("No rental history found for this customer.")
     else:
-        print("No customer found with the given email.")
+        print("No customer found with the given email.")'''
 
 def delete_rental_history(customer_id):
     rentals = session.query(Rental).filter(Rental.customer_name == customer_id).all()
@@ -99,6 +110,55 @@ def search_customer_by_name(name):
     else:
         print("No customer found with the given name.")
 
+def rent_bike():
+    try:
+        # Get the list of customers and bikes from the database
+        customers = session.query(Customer).order_by(Customer.id).all()
+        bikes = session.query(Bike).order_by(Bike.id).all()
+
+        # Display customers and ask for selection
+        print("Available Customers:")
+        for idx, customer in enumerate(customers, start=1):
+            print(f"{idx}. {customer.name} ({customer.email})")
+        
+        customer_choice = int(input("Select a customer by number: ")) - 1
+        if 0 <= customer_choice < len(customers):
+            selected_customer = customers[customer_choice]
+            print(f"You selected {selected_customer.name} ({selected_customer.email}).\n")
+        else:
+            print("Invalid selection. Please try again.\n")
+            return
+
+        # Display bikes and ask for selection
+        print("Available Bikes:")
+        for idx, bike in enumerate(bikes, start=1):
+            print(f"{idx}. {bike.bike_type} ({bike.availability_status})")
+        
+        bike_choice = int(input("Select a bike by number: ")) - 1
+        if 0 <= bike_choice < len(bikes):
+            selected_bike = bikes[bike_choice]
+            print(f"You selected {selected_bike.bike_type} ({selected_bike.availability_status}).\n")
+        else:
+            print("Invalid selection. Please try again.\n")
+            return
+
+        # Create a new rental record
+        new_rental = Rental(
+            rental_date= datetime.date.today(),
+            return_date= datetime.date.today() + datetime.timedelta(days=1),  # Example rental period
+            rental_duration=1,  # Example rental duration in days
+            customer_name=selected_customer.name,
+            bike_id=selected_bike.id
+        )
+
+        # Add the new rental to the session and commit
+        session.add(new_rental)
+        session.commit()
+
+        print(f"Rental added successfully for {selected_customer.name} with bike {selected_bike.bike_type}.\n")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
 def run_cli():
     while True:
         print("\nBike Rental System CLI")
@@ -111,8 +171,9 @@ def run_cli():
         print("7. View Available Bikes")
         print("8. View All Customers")
         print("9. View Rented Bikes")
-        print("10. View Rental History")
-        print("11. Exit")
+        print("10. View Rentals")
+        print("11. Rent bike")
+        print("12. Exit")
         choice = input("Select an option: ")
 
         if choice == '1':
@@ -148,9 +209,10 @@ def run_cli():
         elif choice == '9':
             view_rented_bikes()
         elif choice == '10':
-            customer_email = input("Enter customer email: ")
-            view_rental_history(customer_email)
+            view_rentals()
         elif choice == '11':
+            rent_bike()    
+        elif choice == '12':
             break
         else:
             print("Invalid selection. Please try again.")
