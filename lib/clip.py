@@ -58,3 +58,63 @@ def search_customer_by_name(name):
             print("No rentals found for this customer.")
     else:
         print("No customer found with the given name.")
+
+def run_cli():
+    while True:
+        print("\nBike Rental System CLI")
+        print("1. Add New Customer")
+        print("2. Update Customer Details")
+        print("3. Add New Bike")
+        print("4. Update Bike Details")
+        print("5. Delete Rental History")
+        print("6. Search Customer by Name")
+        print("7. View Available Bikes")
+        print("8. View All Customers")
+        print("9. View Rented Bikes")
+        print("10. View Rental History")
+        print("11. Exit")
+        choice = input("Select an option: ")
+
+        if choice == '1':
+            name = input("Enter customer name: ")
+            email = input("Enter customer email: ")
+            rental_history = input("Enter rental history (optional): ")
+            add_customer(name, email, rental_history)
+        elif choice == '2':
+            id = int(input("Enter customer ID: "))
+            name = input("Enter new customer name (optional): ")
+            email = input("Enter new customer email (optional): ")
+            rental_history = input("Enter new rental history (optional): ")
+            update_customer(id, name, email, rental_history)
+        elif choice == '3':
+            bike_type = input("Enter bike type: ")
+            availability_status = input("Enter availability status (available/rented): ")
+            add_bike(bike_type, availability_status)
+        elif choice == '4':
+            id = int(input("Enter bike ID: "))
+            bike_type = input("Enter new bike type (optional): ")
+            availability_status = input("Enter new availability status (optional): ")
+            update_bike(id, bike_type, availability_status)
+        elif choice == '5':
+            customer_id = input("Enter customer ID: ")
+            delete_rental_history(customer_id)
+        elif choice == '6':
+            name = input("Enter customer name to search: ")
+            search_customer_by_name(name)
+        elif choice == '7':
+            view_available_bikes()
+        elif choice == '8':
+            view_all_customers()
+        elif choice == '9':
+            view_rented_bikes()
+        elif choice == '10':
+            customer_email = input("Enter customer email: ")
+            view_rental_history(customer_email)
+        elif choice == '11':
+            break
+        else:
+            print("Invalid selection. Please try again.")
+
+if __name__ == "__main__":
+    init_db()
+    run_cli()
