@@ -18,6 +18,15 @@ class Rental(Base):
     customer = relationship("Customer", back_populates="rentals")
     bike = relationship("Bike", back_populates="rentals")
 
+class Customer(Base):
+    __tablename__ = 'customers'
+    
+    id = Column(INTEGER, primary_key=True, autoincrement=True)
+    name = Column(String)
+    email = Column(String)
+    rental_history = Column(TEXT)
+
+    rentals = relationship("Rental", order_by=Rental.id, back_populates="customer")
 
 
 Session = sessionmaker(bind=engine)
