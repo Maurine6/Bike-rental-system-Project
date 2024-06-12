@@ -76,25 +76,15 @@ def view_rentals():
     else:
         print("No rentals found.")        
 
-'''def view_rental_history(customer_email):
-    customer = session.query(Customer).filter(Customer.email == customer_email).first()
-    if customer:
-        rentals = session.query(Rental).filter(Rental.customer_name == customer.name).all()
-        if rentals:
-            print(f"Rental History for {customer.name} ({customer.email}):")
-            for rental in rentals:
-                print(f"ID: {rental.id}, Date: {rental.rental_date} - {rental.return_date}, Duration: {rental.rental_duration}")
-        else:
-            print("No rental history found for this customer.")
-    else:
-        print("No customer found with the given email.")'''
 
-def delete_rental_history(customer_id):
-    rentals = session.query(Rental).filter(Rental.customer_name == customer_id).all()
-    for rental in rentals:
+def delete_rental(rental_id):
+    rental = session.query(Rental).get(rental_id)
+    if rental:
         session.delete(rental)
-    session.commit()
-    print(f"Deleted rental history for customer {customer_id}")
+        session.commit()
+        print(f"Deleted rental with ID {rental_id}")
+    else:
+        print(f"No rental found with ID {rental_id}")
 
 def search_customer_by_name(name):
     customer = session.query(Customer).filter(Customer.name == name).first()
@@ -166,7 +156,7 @@ def run_cli():
         print("2. Update Customer Details")
         print("3. Add New Bike")
         print("4. Update Bike Details")
-        print("5. Delete Rental History")
+        print("5. Delete Rental")
         print("6. Search Customer by Name")
         print("7. View Available Bikes")
         print("8. View All Customers")
@@ -198,7 +188,7 @@ def run_cli():
             update_bike(id, bike_type, availability_status)
         elif choice == '5':
             customer_id = input("Enter customer ID: ")
-            delete_rental_history(customer_id)
+            delete_rental(customer_id)
         elif choice == '6':
             name = input("Enter customer name to search: ")
             search_customer_by_name(name)
