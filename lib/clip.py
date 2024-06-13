@@ -1,19 +1,31 @@
+# bike rental system cli
+# import all the necessary modules
 import argparse
 import sys
 import datetime
 from main import Base, engine, session
 from main import Customer, Bike, Rental
 
+#initialize database
 def init_db():
+    # call the parent class Base to store our data
     Base.metadata.create_all(engine)
 
+# start defining needed functions to run our cli
+# define add-customer function
 def add_customer(name, email, rental_history=None):
+    # create a new customer
     new_customer = Customer(name=name, email=email, rental_history=rental_history)
+    # add new customer to the database
     session.add(new_customer)
+    # commit the created customer
     session.commit()
+    # print customer details when the function is called
     print(f"Added customer {name}")
 
+# define update customer function
 def update_customer(id, name=None, email=None, rental_history=None):
+    # query the customer id.
     customer = session.query(Customer).get(id)
     if name:
         customer.name = name
@@ -21,26 +33,38 @@ def update_customer(id, name=None, email=None, rental_history=None):
         customer.email = email
     if rental_history:
         customer.rental_history = rental_history
+    # commit the update    
     session.commit()
+    # print the update when requested
     print(f"Updated customer {id}")
 
+# define add bike function
 def add_bike(bike_type, availability_status):
+    # create a new bike
     new_bike = Bike(bike_type=bike_type, availability_status=availability_status)
+    # add the new bike to the database
     session.add(new_bike)
+    #commit the new bike and print new bike when requested
     session.commit()
     print(f"Added bike of type {bike_type}")
 
+# define update bike function
 def update_bike(id, bike_type=None, availability_status=None):
+    # update bike details
     bike = session.query(Bike).get(id)
     if bike_type:
         bike.bike_type = bike_type
     if availability_status:
         bike.availability_status = availability_status
+        # commit the updates. print when requested
     session.commit()
     print(f"Updated bike {id}")
 
+# define view available function
 def view_available_bikes():
+    # create a query to view available bikes
     available_bikes = session.query(Bike).filter(Bike.availability_status == 'available').all()
+    # check if the bikes are availble
     if available_bikes:
         print("Available Bikes:")
         for bike in available_bikes:
@@ -48,8 +72,11 @@ def view_available_bikes():
     else:
         print("No bikes are available for rent.")
 
+# define view customer functon
 def view_all_customers():
+    # create a query to view customers
     customers = session.query(Customer).all()
+    # check if the customers are available
     if customers:
         print("All Customers:")
         for customer in customers:
@@ -57,8 +84,11 @@ def view_all_customers():
     else:
         print("No customers found.")
 
+# define a view rented function
 def view_rented_bikes():
+    # create a query to view all rented bikes
     rented_bikes = session.query(Bike).filter(Bike.availability_status!= 'available').all()
+    # check if theres any rented bikes
     if rented_bikes:
         print("Rented Bikes:")
         for bike in rented_bikes:
@@ -66,8 +96,11 @@ def view_rented_bikes():
     else:
         print("No bikes are currently rented.")
 
+# define a view rentals function
 def view_rentals():
+    # create a query to view rentals
     rentals = session.query(Rental).all()
+    # check if there's rentals
     if rentals:
         print("All Rentals:")
         for rental in rentals:
@@ -76,9 +109,11 @@ def view_rentals():
     else:
         print("No rentals found.")        
 
-
+# define function to delete rental
 def delete_rental(rental_id):
+    # create a query to delete the selected rental
     rental = session.query(Rental).get(rental_id)
+    # check if the sected rental is available
     if rental:
         session.delete(rental)
         session.commit()
@@ -86,8 +121,11 @@ def delete_rental(rental_id):
     else:
         print(f"No rental found with ID {rental_id}")
 
+#define a search customer 
 def search_customer_by_name(name):
+    # create a query to search customer by name
     customer = session.query(Customer).filter(Customer.name == name).first()
+    # check if the customer is available
     if customer:
         print(f"Found customer: {customer.name} ({customer.email})")
         rentals = session.query(Rental).filter(Rental.customer_name == customer.name).all()
@@ -100,6 +138,7 @@ def search_customer_by_name(name):
     else:
         print("No customer found with the given name.")
 
+# create and define a funtion to enable renting a bike
 def rent_bike():
     try:
         # Get the list of customers and bikes from the database
@@ -149,6 +188,7 @@ def rent_bike():
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
+# run cli
 def run_cli():
     while True:
         print("\nBike Rental System CLI")
