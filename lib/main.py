@@ -49,6 +49,11 @@ class Bike(Base):
     # define bikes-rental relationship
     rentals = relationship("Rental", order_by=Rental.id, back_populates="bike")
 
+    def __init__(self,id,bike_type,availability_status):
+        self.id = id
+        self.bike_type = bike_type
+        self.availability_status = availability_status
+
 # create a database using inbuilt create engine function
 engine = create_engine("sqlite:///mydb.db", echo=True)
 #store all data in the engine

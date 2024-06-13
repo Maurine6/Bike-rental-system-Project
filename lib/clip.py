@@ -2,9 +2,28 @@
 # import all the necessary modules
 import argparse
 import sys
+from colorama import Fore, Back, Style, init
 import datetime
 from main import Base, engine, session
 from main import Customer, Bike, Rental
+
+# Initialize colorama
+init(autoreset=True)
+
+# Function to display the introduction message with a background color
+def intro_message():
+    print(Back.BLUE + Fore.WHITE + """
+    _____ _           _       _     _ _
+    / ____| |         (_)     | |   | | |
+   | |  __| |_ __ _ ___ _ __ | | __| | | |_
+   | | |_ | __/ _ \_ _| '_ \| |/ _ \\| |  _|
+   |_|_| |_|\_\___/\__|.__/|_|\__,_| |_|
+                      | |
+                      |_|
+
+    Welcome to the Bike Rental System CLI!
+    Manage your bike rental business efficiently.
+    """)
 
 #initialize database
 def init_db():
@@ -190,6 +209,8 @@ def rent_bike():
 
 # run cli
 def run_cli():
+    intro_message()
+    
     while True:
         print("\nBike Rental System CLI")
         print("1. Add New Customer")
